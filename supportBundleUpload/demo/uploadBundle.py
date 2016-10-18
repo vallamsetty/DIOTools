@@ -31,10 +31,10 @@ def find_folder_examples(client):
     for item in items:
         if (item.name == 'SupportBundle'):
             root_folder = client.folder(item.id)
-            testVar = raw_input("Ask user for something:")
+            testVar = raw_input("Please provide name of file to be uploaded:")
             print('{0} uploaded: '.format(testVar))
-            file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'file.txt')
-            a_file = root_folder.upload(file_path, file_name='i-am-a-file.txt')
+            file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), testVar)
+            a_file = root_folder.upload(file_path, file_name=testVar)
             try:
                 print('{0} uploaded: '.format(a_file.get()['name']))
             except BoxAPIException:
