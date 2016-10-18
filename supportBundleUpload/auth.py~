@@ -1,0 +1,9 @@
+from boxsdk import OAuth2
+
+oauth = OAuth2(
+    client_id='riwciru4xorb8p8ouddnq9yt9m75zvxp',
+    client_secret='3AQsuW6GaK0TPYIqy5TFCcwijrzzP2ye',
+    store_tokens=your_store_tokens_callback_method,
+)
+
+auth_url, csrf_token = oauth.get_authorization_url('http://0.0.0.0')
