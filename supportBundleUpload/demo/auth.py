@@ -18,6 +18,17 @@ from boxsdk import OAuth2
 CLIENT_ID = '37vdfnknzax5htrkiler5xkphbxs6f4s'  # Insert Box client ID here
 CLIENT_SECRET = 'pMUwYf2g1iAsvFDnCA08ASa1oHwYj3Ut'  # Insert Box client secret here
 
+# from boxsdk import JWTAuth
+
+# auth = JWTAuth(
+#     client_id='37vdfnknzax5htrkiler5xkphbxs6f4s',
+#     client_secret='pMUwYf2g1iAsvFDnCA08ASa1oHwYj3Ut',
+#     enterprise_id='849101',
+#     jwt_key_id='h4qpyf9b',
+#     rsa_private_key_file_sys_path='private_key.pem',
+#     store_tokens=your_store_tokens_callback_method,
+# )
+
 
 def authenticate(oauth_class=OAuth2):
     class StoppableWSGIServer(bottle.ServerAdapter):

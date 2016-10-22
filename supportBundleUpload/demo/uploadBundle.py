@@ -287,13 +287,38 @@ def run_metadata_example(client):
     finally:
         foo.delete()
 
+from boxsdk import JWTAuth
 
-def run_examples(oauth):
+import shelve
 
-    client = Client(oauth)
+
+def store_tokens_callback_method(access_token, refresh_token):
+    # store the tokens at secure storage (e.g. Keychain)
+    d.shelve =  shelve.open("db.shlv")
+    d["access_token"]=access_token
+    d["refresh_token"]=refresh_token
+    d.close()
+    return
+
+def run_examples_auth():
+        
+    auth = JWTAuth(
+        client_id='37vdfnknzax5htrkiler5xkphbxs6f4s',
+        client_secret='pMUwYf2g1iAsvFDnCA08ASa1oHwYj3Ut',
+        enterprise_id='849101',
+        jwt_key_id='h4qpyf9b',
+        rsa_private_key_file_sys_path='private_key.pem',
+        store_tokens=store_tokens_callback_method,
+    )
+
+    access_token = auth.authenticate_instance()
+
+    client = Client(auth)
 
     run_user_example(client)
+
     find_folder_examples(client)
+
 #     run_collab_examples(client)
 #     rename_folder(client)
 #     get_folder_shared_link(client)
@@ -315,11 +340,12 @@ def run_examples(oauth):
 #     upload_accelerator(client)
 
 
+
 def main():
 
     # Please notice that you need to put in your client id and client secret in demo/auth.py in order to make this work.
-    oauth, _, _ = authenticate()
-    run_examples(oauth)
+#    oauth, _, _ = authenticate()
+    run_examples_auth()
     os._exit(0)
 
 if __name__ == '__main__':
