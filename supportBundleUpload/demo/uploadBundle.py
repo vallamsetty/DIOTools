@@ -25,10 +25,25 @@ def run_folder_examples(client):
 
 def find_folder_examples(client):
     root_folder = client.folder(folder_id='0').get()
-    print('The root folder is owned by: {0}'.format(root_folder.owned_by['login']))
+    print('The root folder {0} is owned by: {1}'.format(root_folder.name, root_folder.owned_by['login']))
 
-    items = root_folder.get_items(limit=100, offset=0)
+    try:
+        items = root_folder.get_items(limit=100, offset=0)
+    except BoxAPIException:
+        print('get_items failed')
+    print ('finished get items, number of items = {0}'.format(len(items)))
+    testVar = raw_input("Please provide name of file to be uploaded:")
+    print('{0} uploaded: '.format(testVar))
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), testVar)
+    try:
+        a_file = root_folder.upload(file_path, file_name=testVar)
+    except BoxAPIException:
+        print('upload failed')
+        pass
+
     for item in items:
+        print ("im here")
+        print('Directory entry:{0}'.format(item.name))
         if (item.name == 'SupportBundle'):
             root_folder = client.folder(item.id)
             testVar = raw_input("Please provide name of file to be uploaded:")
@@ -43,20 +58,21 @@ def find_folder_examples(client):
 
 def run_collab_examples(client):
     root_folder = client.folder(folder_id='0')
-    collab_folder = root_folder.create_subfolder('collab folder')
+    collab_folder = root_folder.create_subfolder('TestSupportBundle1')
     try:
         print('Folder {0} created'.format(collab_folder.get()['name']))
-        collaboration = collab_folder.add_collaborator('someone@example.com', CollaborationRole.VIEWER)
+        collaboration = collab_folder.add_collaborator('shalabh.goyal@datos.io', CollaborationRole.VIEWER)
         print('Created a collaboration')
         try:
             modified_collaboration = collaboration.update_info(role=CollaborationRole.EDITOR)
             print('Modified a collaboration: {0}'.format(modified_collaboration.role))
         finally:
-            collaboration.delete()
+#            collaboration.delete()
             print('Deleted a collaboration')
     finally:
         # Clean up
-        print('Delete folder collab folder succeeded: {0}'.format(collab_folder.delete()))
+#        print('Delete folder collab folder succeeded: {0}'.format(collab_folder.delete()))
+        print("finally here")
 
 
 def rename_folder(client):
@@ -294,7 +310,7 @@ import shelve
 
 def store_tokens_callback_method(access_token, refresh_token):
     # store the tokens at secure storage (e.g. Keychain)
-    d.shelve =  shelve.open("db.shlv")
+    d =  shelve.open("db.shlv")
     d["access_token"]=access_token
     d["refresh_token"]=refresh_token
     d.close()
@@ -305,36 +321,35 @@ def run_examples_auth():
     auth = JWTAuth(
         client_id='37vdfnknzax5htrkiler5xkphbxs6f4s',
         client_secret='pMUwYf2g1iAsvFDnCA08ASa1oHwYj3Ut',
-        enterprise_id='849101',
+        enterprise_id="849101",
         jwt_key_id='h4qpyf9b',
         rsa_private_key_file_sys_path='private_key.pem',
-        store_tokens=store_tokens_callback_method,
+	rsa_private_key_passphrase=b'datos1234',
+ #       store_tokens=store_tokens_callback_method,
     )
 
     access_token = auth.authenticate_instance()
 
+#    auth._user_id = None
+#    access_token = auth._auth_with_jwt(auth._enterprise_id, 'Business')
+
     client = Client(auth)
+
+    try:
+        users = client.users()
+    except BoxAPIException:
+        print('users failed')
+
+    for user in users:
+        print("im here")
+        print('Username = {0}, Login = {1}'.format(user.name,user.login))
 
     run_user_example(client)
 
     find_folder_examples(client)
 
-#     run_collab_examples(client)
-#     rename_folder(client)
-#     get_folder_shared_link(client)
-#    upload_file(client)
-#     rename_file(client)
-#     update_file(client)
-#     search_files(client)
-#     copy_item(client)
-#     move_item(client)
-#     get_events(client)
-#     get_latest_stream_position(client)
-#     # long_poll(client)
+#    run_collab_examples(client)
 
-#     # Enterprise accounts only
-#     run_groups_example(client)
-#     run_metadata_example(client)
 
 #     # Premium Apps only
 #     upload_accelerator(client)
